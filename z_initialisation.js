@@ -253,6 +253,14 @@ function detectHandGesture(hand) {
     return "Fist";
   }
   
+  let pinkyUp = hand.pinky_finger_tip.y < hand.pinky_finger_pip.y - 20;
+  let middleDown = hand.middle_finger_tip.y > hand.middle_finger_pip.y
+  
+  if(indexUp && middleDown && ringDown && pinkyUp && thumbUp){
+    return "Spidey";
+  }
+  
+
   return null;
 }
 

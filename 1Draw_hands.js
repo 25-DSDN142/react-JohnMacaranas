@@ -25,14 +25,15 @@ function drawInteraction(faces, hands) {
     Start drawing on the hands here
     */
 
-    fill(225, 225, 0);
-    ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
+    // fill(225, 225, 0);
+    // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
 
     // drawPoints(hand)
 
-    //fingerPuppet(indexFingerTipX, indexFingerTipY);
+    // fingerPuppet(indexFingerTipX, indexFingerTipY);
 
-    //chameleonHandPuppet(hand)
+    // chameleonHandPuppet(hand)
+    pinchCircle(hand);
 
     /*
     Stop drawing on the hands here

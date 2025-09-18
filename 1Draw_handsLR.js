@@ -31,6 +31,9 @@ function drawInteraction(faces, hands) {
     if (whatGesture == "Thumbs Up") {
       fill(255, 252, 48) // yellow
     }
+    if (whatGesture == "Spidey"){
+      fill(255, 0, 0);
+    }
 
 
     if (hand.handedness === "Right") {
