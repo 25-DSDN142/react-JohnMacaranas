@@ -58,6 +58,6 @@ const numberOfHands = 2;
 
 const threshold = 0.9 // only change if you're having hand detection issues
 
-const performanceMode = 'high'; // 'low', 'balanced', 'high'
+const performanceMode = 'low'; // 'low', 'balanced', 'high'
 
 
