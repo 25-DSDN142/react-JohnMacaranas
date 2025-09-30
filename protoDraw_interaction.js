@@ -1,43 +1,53 @@
 let timeToPress = 5000;
 let startOfPress = 0;
 let progress = 0;
-let testArray = ["Apple", "Banana", "Cherry", "DragonFruit", "Eggfruit","Fig","Grapes"];
+// let testArray = ["Apple", "Banana", "Cherry", "DragonFruit", "Eggfruit","Fig","Grapes"];
+let testArray = [];
 let a = 1;
 
+let timer = 5;
 // ----=  HANDS  =----
-// USING THE GESTURE DETECTORS (check their values in the debug menu)
-// detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
-
-/* load images here */
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
   ArrowL = loadImage('/images/Proto/arrowL.png');
   ArrowR = loadImage('/images/Proto/arrowR.png');
   SelectArrowL = loadImage('/images/Proto/arrowSelectL.png');
   SelectArrowR = loadImage('/images/Proto/arrowSelectR.png');
+  testArray.push(loadImage('/images/Proto/glasses.png'));
+  testArray.push(loadImage('/images/Proto/glasses2.png'));
+  testArray.push(loadImage('/images/Proto/moustache.png'));
+
+textSize(28);
+text(timer, 200, 300);
+if(millis() % 60 && timer > 0){
+  timer --;
+}
+if(timer == 0){
+  saveCanvas('ml5-capture-' + frameCount, 'png');
+}
+
 }
 
 function drawInteraction(faces, hands) {
-textSize(28);
-text(testArray[a], 200, 300);
 
 
   // hands part
+  // USING THE GESTURE DETECTORS (check their values in the debug menu)
+  // detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
+
   // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
   for (let i = 0; i < hands.length; i++) {
     let hand = hands[i];
-    // console.log(hand);
     if (showKeypoints) {
+      drawPoints(hand)
       drawConnections(hand)
     }
-
+    // console.log(hand);
     let middleFingerMcpX = hand.middle_finger_mcp.x;
     let middleFingerMcpY = hand.middle_finger_mcp.y;
-
     /*
     Start drawing on the hands here
     */
-
     let indexFingerTipX = hand.index_finger_tip.x;
     let indexFingerTipY = hand.index_finger_tip.y;
     let thumbTipX = hand.thumb_tip.x;
@@ -86,17 +96,75 @@ text(testArray[a], 200, 300);
       startOfPress = 0;
       progress = 0;
     }
-
-    
-
     /*
     Stop drawing on the hands here
     */
   }
-  // You can make addtional elements here, but keep the hand drawing inside the for loop. 
-  //------------------------------------------------------
-  
 
+
+
+  //------------------------------------------------------------
+  //facePart
+  // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
+  for (let i = 0; i < faces.length; i++) {
+    let face = faces[i]; // face holds all the keypoints of the face
+    if (showKeypoints) {
+      drawPoints(face)
+    }
+    // console.log(face);
+    /*
+    Once this program has a face, it knows some things about it.
+    This includes how to draw a box around the face, and an oval. 
+    It also knows where the key points of the following parts are:
+     face.leftEye
+     face.leftEyebrow
+     face.lips
+     face.rightEye
+     face.rightEyebrow
+    */
+
+    /*
+    Start drawing on the face here
+    */
+    let faceWidth = face.faceOval.width;
+    let faceHeight = face.faceOval.height;
+    let faceCenterX = face.faceOval.centerX;
+    let faceCenterY = face.faceOval.centerY;
+
+    let leftEyeCenterX = face.leftEye.centerX;
+    let leftEyeCenterY = face.leftEye.centerY;
+    let rightEyeCenterX = face.rightEye.centerX;
+    let rightEyeCenterY = face.rightEye.centerY;
+
+    let scaleX = faceWidth / 640;
+    let scaleY = faceHeight / 480;
+
+    let rotateAmount;
+
+    let dy = leftEyeCenterY - rightEyeCenterY;
+    let dx = leftEyeCenterX - rightEyeCenterX;
+
+    rotateAmount = Math.atan2(dy, dx);
+
+
+
+    // console.log(faceWidth);
+    // console.log(faceHeight);
+
+    push();
+    imageMode(CENTER);
+    translate(faceCenterX, faceCenterY);
+    rotate(rotateAmount);
+    image(testArray[a], 0, 0, faceWidth, faceHeight);
+    pop();
+    // rect(face.faceOval.centerX, face.faceOval.centerY, face.faceOval.width, face.faceOval.height);
+    /*
+    Stop drawing on the face here
+    */
+
+  }
+  //------------------------------------------------------
+  // You can make addtional elements here, but keep the face drawing inside the for loop. 
 }
 
 
@@ -115,14 +183,36 @@ function drawConnections(hand) {
   pop()
 }
 
+function pinchCircle(hand) { // adapted from https://editor.p5js.org/ml5/sketches/DNbSiIYKB
+  // Find the index finger tip and thumb tip
+  let finger = hand.index_finger_tip;
+  //let finger = hand.pinky_finger_tip;
+  let thumb = hand.thumb_tip;
+
+  // Draw circles at finger positions
+  let centerX = (finger.x + thumb.x) / 2;
+  let centerY = (finger.y + thumb.y) / 2;
+  // Calculate the pinch "distance" between finger and thumb
+  let pinch = dist(finger.x, finger.y, thumb.x, thumb.y);
+
+  // This circle's size is controlled by a "pinch" gesture
+  fill(0, 255, 0, 200);
+  stroke(0);
+  strokeWeight(2);
+  circle(centerX, centerY, pinch);
+
+}
+
+
 // This function draw's a dot on all the keypoints. It can be passed a whole face, or part of one. 
 function drawPoints(feature) {
+
   push()
   for (let i = 0; i < feature.keypoints.length; i++) {
     let element = feature.keypoints[i];
     noStroke();
     fill(0, 255, 0);
-    circle(element.x, element.y, 10);
+    circle(element.x, element.y, 5);
   }
   pop()
 
