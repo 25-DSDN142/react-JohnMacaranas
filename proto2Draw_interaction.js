@@ -4,9 +4,12 @@ let progress = 0;
 // let testArray = ["Apple", "Banana", "Cherry", "DragonFruit", "Eggfruit","Fig","Grapes"];
 let testArray = [];
 let testArray2 = [];
-let a = 0;
+let a = 1;
 // let b;
-// let testArrayGroup = [testArray, testArray2];
+let testArrayGroup = [];
+
+let vis = false;
+let bvis = false;
 
 let button;
 let timer = 5;
@@ -18,12 +21,17 @@ function prepareInteraction() {
   ArrowR = loadImage('/images/Proto/arrowR.png');
   SelectArrowL = loadImage('/images/Proto/arrowSelectL.png');
   SelectArrowR = loadImage('/images/Proto/arrowSelectR.png');
+  testArray.push(loadImage('/images/Proto/blank.png'));
   testArray.push(loadImage('/images/Proto/glasses.png'));
   testArray.push(loadImage('/images/Proto/glasses2.png'));
+  testArray2.push(loadImage('/images/Proto/blank.png'));
   testArray2.push(loadImage('/images/Proto/moustache.png'));
   testArray2.push(loadImage('/images/Proto/goatee.png'));
   selectIcons = loadImage('images/Proto/iconSelect.png');
-
+  testArrayGroup.push(loadImage('/images/Proto/blank.png'));
+  testArrayGroup.push(testArray);
+  testArrayGroup.push(testArray2);
+  
   
   button = createButton("START");
   button.mouseClicked(programStart);
@@ -73,27 +81,35 @@ if(start == true){
         progress = startOfPress / timeToPress * 100;       
 
         if(progress >= 20){
-          a = 0;
+          vis = vis ? false: true;
         }
       }
-    } 
-    if(whatGesture == 'Pinch' && x > 920 && x <= 1230 && y > 475 && y <= 745){ //glasses
+    } else if(whatGesture == 'Pinch' && x > 920 && x <= 1230 && y > 475 && y <= 745){ //glasses
       startOfPress = millis();
       if(startOfPress > 0 && progress < 20){                
         progress = startOfPress / timeToPress * 100;       
 
         if(progress >= 20){
-          a = 1;
+          bvis = bvis ? false: true;
         }
       }
-    } 
-
+    } else {
+      
+    }
+  
+  if(vis == true){
+    glassesAsset();
+  }
+  if(bvis == true){
+    mustacheAsset();
+  }
     
     /*
     Stop drawing on the hands here
     */
   }
-  image(testArray[a], 0, 0);
+  console.log(bvis);
+ 
   //------------------------------------------------------------
   //facePart
   // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
@@ -138,13 +154,23 @@ if(start == true){
     rotateAmount = Math.atan2(dy, dx);
 
 
+    if(vis == true){
+    push();
+    imageMode(CENTER);
+    translate(faceCenterX, faceCenterY);
+    rotate(rotateAmount);
+    image(testArray[a], 0, 0, faceWidth, faceHeight);
+    pop();
+    }
 
-// push();
-// imageMode(CENTER);
-// translate(faceCenterX, faceCenterY);
-// rotate(rotateAmount);
-// image(testArray[a], 0, 0);
-// pop();
+    if(bvis == true){
+      push();
+        imageMode(CENTER);
+        translate(faceCenterX, faceCenterY);
+        rotate(rotateAmount);
+        image(testArray2[a], 0, 0, faceWidth, faceHeight);
+      pop();
+    }
     // rect(face.faceOval.centerX, face.faceOval.centerY, face.faceOval.width, face.faceOval.height);
     /*
     Stop drawing on the face here
@@ -214,6 +240,27 @@ function programStart(){
 }
 
 function glassesAsset(){
+   for (let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+    if (showKeypoints) {
+      drawPoints(hand)
+      drawConnections(hand)
+    }
+    // console.log(hand);
+    let middleFingerMcpX = hand.middle_finger_mcp.x;
+    let middleFingerMcpY = hand.middle_finger_mcp.y;
+
+    let indexFingerTipX = hand.index_finger_tip.x;
+    let indexFingerTipY = hand.index_finger_tip.y;
+    let thumbTipX = hand.thumb_tip.x;
+    let thumbTipY = hand.thumb_tip.y;
+
+    let x = (indexFingerTipX + thumbTipX) * 0.5; // find half way between the index and thumn
+    let y = (indexFingerTipY + thumbTipY) * 0.5;
+    /*
+    Start drawing on the hands here
+    */
+    let whatGesture = detectHandGesture(hand);
   if(hand.handedness == 'Left'){
             rectMode(CENTER);
             image(ArrowL, x, y);
@@ -254,7 +301,29 @@ function glassesAsset(){
          progress = 0;
           }
 }
+}
 function mustacheAsset(){
+   for (let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+    if (showKeypoints) {
+      drawPoints(hand)
+      drawConnections(hand)
+    }
+    // console.log(hand);
+    let middleFingerMcpX = hand.middle_finger_mcp.x;
+    let middleFingerMcpY = hand.middle_finger_mcp.y;
+
+    let indexFingerTipX = hand.index_finger_tip.x;
+    let indexFingerTipY = hand.index_finger_tip.y;
+    let thumbTipX = hand.thumb_tip.x;
+    let thumbTipY = hand.thumb_tip.y;
+
+    let x = (indexFingerTipX + thumbTipX) * 0.5; // find half way between the index and thumn
+    let y = (indexFingerTipY + thumbTipY) * 0.5;
+    /*
+    Start drawing on the hands here
+    */
+    let whatGesture = detectHandGesture(hand);
   if(hand.handedness == 'Left'){
             rectMode(CENTER);
             image(ArrowL, x, y);
@@ -294,4 +363,5 @@ function mustacheAsset(){
          startOfPress = 0;
          progress = 0;
           }
+  }
 }
