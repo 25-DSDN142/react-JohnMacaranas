@@ -1,53 +1,76 @@
 let timeToPress = 5000;
 let startOfPress = 0;
 let progress = 0;
-// let testArray = ["Apple", "Banana", "Cherry", "DragonFruit", "Eggfruit","Fig","Grapes"];
-let testArray = [];
-let testArray2 = [];
+let timeToPress2 = 5000;
+let startOfPress2 = 0;
+let progress2 = 0;
+let timeToPress3 = 5000;
+let startOfPress3 = 0;
+let progress3 = 0;
+let glassesArray = [];
+let mustacheArray = [];
+let hatArray = [];
 let a = 1;
-// let b;
-let testArrayGroup = [];
+let b = 1;
+let c = 1;
 
+//accessory visibility
 let vis = false;
-let bvis = false;
+let glassesVis = false;
+let hatVis = true;
 
+//start button
 let button;
-let timer = 5;
 let start = false;
+
+//timer
+let timerStart;
+let timerDuration = 10;
+let timer = timerDuration;
+let countDown;
+
+
+//photos
+let photoDisplay = [];
+let numPhotos;
+let photo = false;
+let snap = 0;
+let px = 40;
+let py = 400;
+let pw = 186;
+let ph = 140;
 // ----=  HANDS  =----
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
+  UI = loadImage('/images/Proto/ui.png');
   ArrowL = loadImage('/images/Proto/arrowL.png');
   ArrowR = loadImage('/images/Proto/arrowR.png');
   SelectArrowL = loadImage('/images/Proto/arrowSelectL.png');
   SelectArrowR = loadImage('/images/Proto/arrowSelectR.png');
-  testArray.push(loadImage('/images/Proto/blank.png'));
-  testArray.push(loadImage('/images/Proto/glasses.png'));
-  testArray.push(loadImage('/images/Proto/glasses2.png'));
-  testArray2.push(loadImage('/images/Proto/blank.png'));
-  testArray2.push(loadImage('/images/Proto/moustache.png'));
-  testArray2.push(loadImage('/images/Proto/goatee.png'));
+  glassesArray.push(loadImage('/images/Proto/blank.png'));
+  glassesArray.push(loadImage('/images/Proto/glasses.png'));
+  glassesArray.push(loadImage('/images/Proto/glasses2.png'));
+  mustacheArray.push(loadImage('/images/Proto/blank.png'));
+  mustacheArray.push(loadImage('/images/Proto/moustache.png'));
+  mustacheArray.push(loadImage('/images/Proto/goatee.png'));
+  hatArray.push(loadImage('/images/Proto/blank.png'));
+  hatArray.push(loadImage('/images/Proto/hat.png'));
+  hatArray.push(loadImage('/images/Proto/cap.png'));
   selectIcons = loadImage('images/Proto/iconSelect.png');
-  testArrayGroup.push(loadImage('/images/Proto/blank.png'));
-  testArrayGroup.push(testArray);
-  testArrayGroup.push(testArray2);
-  
-  
-  button = createButton("START");
-  button.mouseClicked(programStart);
-  button.size(200,100);
-  button.position(540, 380);
-  button.style("font-family", "Bodoni");
-  button.style("font-size", "48px");
-  
 
+  
+  startButton();
 }
 
 function drawInteraction(faces, hands) {
 
-
+  //photos and timer
 if(start == true){
-  image(selectIcons, 0, 0);
+  image(UI, 0, 0);
+  
+  //TIMER 
+  startTimer();
+
   // hands part
   // USING THE GESTURE DETECTORS (check their values in the debug menu)
   // detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
@@ -74,41 +97,46 @@ if(start == true){
     Start drawing on the hands here
     */
     let whatGesture = detectHandGesture(hand);
-
-    if(whatGesture == 'Pinch' && x > 920 && x <= 1230 && y > 180 && y <= 450){ //glasses
-      startOfPress = millis();
-      if(startOfPress > 0 && progress < 20){                
-        progress = startOfPress / timeToPress * 100;       
-
-        if(progress >= 20){
-          vis = vis ? false: true;
-        }
-      }
-    } else if(whatGesture == 'Pinch' && x > 920 && x <= 1230 && y > 475 && y <= 745){ //glasses
-      startOfPress = millis();
-      if(startOfPress > 0 && progress < 20){                
-        progress = startOfPress / timeToPress * 100;       
-
-        if(progress >= 20){
-          bvis = bvis ? false: true;
-        }
-      }
-    } else {
-      
-    }
+      // console.log(vis);
   
-  if(vis == true){
-    glassesAsset();
-  }
-  if(bvis == true){
-    mustacheAsset();
-  }
+    if(x > 920 && x <= 1230 && y > 180 && y <= 450){ //glasses visibility
+      if(whatGesture == 'Pinch'){
+      startOfPress = millis();
+        if(startOfPress > 0 && progress < 10){                
+          progress = startOfPress / timeToPress * 100;       
+
+          if(progress >= 10){
+            toggleHat();
+          }
+        }
+      }
+    } 
+    if(vis == true){
+      glassesAsset();
+    }
+    
+    if(x > 920 && x <= 1230 && y > 475 && y <= 745){ //mustache visibility
+      if(whatGesture == 'Pinch'){
+      startOfPress2 = millis();
+        if(startOfPress2 > 0 && progress2 < 10){                
+          progress2 = startOfPress2 / timeToPress2 * 100;       
+
+          if(progress2 >= 10){
+            toggleBVis();
+          }
+        }
+      }
+    }
+    if(glassesVis == true){
+      mustacheAsset();
+    }
+
     
     /*
     Stop drawing on the hands here
     */
   }
-  console.log(bvis);
+  // console.log(bvis);
  
   //------------------------------------------------------------
   //facePart
@@ -151,24 +179,37 @@ if(start == true){
     let dy = leftEyeCenterY - rightEyeCenterY;
     let dx = leftEyeCenterX - rightEyeCenterX;
 
+    let fE = face.keypoints[234];
+
+
     rotateAmount = Math.atan2(dy, dx);
 
 
-    if(vis == true){
-    push();
-    imageMode(CENTER);
-    translate(faceCenterX, faceCenterY);
-    rotate(rotateAmount);
-    image(testArray[a], 0, 0, faceWidth, faceHeight);
-    pop();
+    if(hatVis == true){
+      push();
+        imageMode(CENTER);
+        translate(faceCenterX+(rotateAmount*2), faceCenterY-faceHeight);
+        rotate(rotateAmount);
+        image(hatArray[a], 0, 0);
+      pop();
     }
 
-    if(bvis == true){
+
+    if(vis == true){ //glasses
       push();
         imageMode(CENTER);
         translate(faceCenterX, faceCenterY);
         rotate(rotateAmount);
-        image(testArray2[a], 0, 0, faceWidth, faceHeight);
+        image(glassesArray[a], 0, 0, faceWidth, faceHeight);
+      pop();
+    }
+
+    if(glassesVis == true){ //mustache
+      push();
+        imageMode(CENTER);
+        translate(faceCenterX, faceCenterY);
+        rotate(rotateAmount);
+        image(mustacheArray[a], 0, 0, faceWidth, faceHeight);
       pop();
     }
     // rect(face.faceOval.centerX, face.faceOval.centerY, face.faceOval.width, face.faceOval.height);
@@ -232,13 +273,69 @@ function drawPoints(feature) {
   pop()
 
 }
+function hatAsset(){
+   for (let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+    if (showKeypoints) {
+      drawPoints(hand)
+      drawConnections(hand)
+    }
+    // console.log(hand);
+    let middleFingerMcpX = hand.middle_finger_mcp.x;
+    let middleFingerMcpY = hand.middle_finger_mcp.y;
 
-function programStart(){
-  button.remove();
-  start = !start;
-  console.log('Button was pressed')
+    let indexFingerTipX = hand.index_finger_tip.x;
+    let indexFingerTipY = hand.index_finger_tip.y;
+    let thumbTipX = hand.thumb_tip.x;
+    let thumbTipY = hand.thumb_tip.y;
+
+    let x = (indexFingerTipX + thumbTipX) * 0.5; // find half way between the index and thumn
+    let y = (indexFingerTipY + thumbTipY) * 0.5;
+    /*
+    Start drawing on the hands here
+    */
+    let whatGesture = detectHandGesture(hand);
+    if(hand.handedness == 'Left'){
+      rectMode(CENTER);
+      image(ArrowL, x, y);
+    }
+    if(hand.handedness == 'Right'){
+      rectMode(CENTER);
+      image(ArrowR, x ,y);
+    }
+
+          if(whatGesture == 'Pinch' && hand.handedness == 'Right'){ //some code sourced from:
+            startOfPress = millis();                               //https://stackoverflow.com/questions/69524578/measuring-how-long-a-key-is-pressed-using-p5-js-and-javascript
+            image(SelectArrowR, x, y);
+            if(startOfPress > 0 && progress < 20){                //this detects if pinching with right hand
+              progress = startOfPress / timeToPress * 100;       //which will then increase the array by 1
+
+              if(progress >= 20){
+                a = (a + 1) % hatArray.length;
+
+                // console.log(progress);
+              }
+            }
+          } else if (whatGesture == 'Pinch' && hand.handedness == 'Left'){ //this detects if pinching with left hand
+            startOfPress = millis();                                      //which will decrease the array by 1
+            image(SelectArrowL, x, y);
+            if(startOfPress > 0 && progress < 20){
+              progress = startOfPress / timeToPress * 100;
+            
+              if(progress >= 20){
+                a = a - 1
+                if(a < 0){
+                  a = hatArray.length - 1;
+                }
+                // console.log(progress);
+              } 
+            }
+          } else {
+         startOfPress = 0;
+         progress = 0;
+          }
 }
-
+}
 function glassesAsset(){
    for (let i = 0; i < hands.length; i++) {
     let hand = hands[i];
@@ -261,14 +358,14 @@ function glassesAsset(){
     Start drawing on the hands here
     */
     let whatGesture = detectHandGesture(hand);
-  if(hand.handedness == 'Left'){
-            rectMode(CENTER);
-            image(ArrowL, x, y);
-          }
-          if(hand.handedness == 'Right'){
-            rectMode(CENTER);
-            image(ArrowR, x ,y);
-          }
+    if(hand.handedness == 'Left'){
+      rectMode(CENTER);
+      image(ArrowL, x, y);
+    }
+    if(hand.handedness == 'Right'){
+      rectMode(CENTER);
+      image(ArrowR, x ,y);
+    }
 
           if(whatGesture == 'Pinch' && hand.handedness == 'Right'){ //some code sourced from:
             startOfPress = millis();                               //https://stackoverflow.com/questions/69524578/measuring-how-long-a-key-is-pressed-using-p5-js-and-javascript
@@ -277,9 +374,9 @@ function glassesAsset(){
               progress = startOfPress / timeToPress * 100;       //which will then increase the array by 1
 
               if(progress >= 20){
-                a = (a + 1) % testArray.length;
+                a = (a + 1) % glassesArray.length;
 
-                console.log(progress);
+                // console.log(progress);
               }
             }
           } else if (whatGesture == 'Pinch' && hand.handedness == 'Left'){ //this detects if pinching with left hand
@@ -291,9 +388,9 @@ function glassesAsset(){
               if(progress >= 20){
                 a = a - 1
                 if(a < 0){
-                  a = testArray.length - 1;
+                  a = glassesArray.length - 1;
                 }
-                console.log(progress);
+                // console.log(progress);
               } 
             }
           } else {
@@ -340,7 +437,7 @@ function mustacheAsset(){
               progress = startOfPress / timeToPress * 100;       //which will then increase the array by 1
 
               if(progress >= 20){
-                a = (a + 1) % testArray.length;
+                a = (a + 1) % mustacheArray.length;
 
                 console.log(progress);
               }
@@ -354,7 +451,7 @@ function mustacheAsset(){
               if(progress >= 20){
                 a = a - 1
                 if(a < 0){
-                  a = testArray.length - 1;
+                  a = mustacheArray.length - 1;
                 }
                 console.log(progress);
               } 
@@ -364,4 +461,101 @@ function mustacheAsset(){
          progress = 0;
           }
   }
+}
+function startButton(){
+  button = createButton("START");
+  button.mouseClicked(photoSelect);
+  button.size(200,100);
+  button.position(540, 380);
+  button.style("font-family", "Bodoni");
+  button.style("font-size", "48px");
+}
+function photoSelect(){
+  button.remove();
+  button1 = createButton("x1");
+  button1.mouseClicked(x1Photo);
+  button1.size(100, 100);
+  button1.position(380, 380);
+  button1.style("font-family", "Bodoni");
+  button1.style("font-size", "48px");
+  button2 = createButton("x3");
+  button2.mouseClicked(x3Photo);
+  button2.size(100, 100);
+  button2.position(490, 380);
+  button2.style("font-family", "Bodoni");
+  button2.style("font-size", "48px");
+  button3 = createButton("x5");
+  button3.mouseClicked(x5Photo);
+  button3.size(100, 100);
+  button3.position(600, 380);
+  button3.style("font-family", "Bodoni");
+  button3.style("font-size", "48px");
+
+}
+function x1Photo(){
+  button1.remove();
+  button2.remove();
+  button3.remove();
+  numPhotos = 1;
+  start = !start;
+  timerStart = millis();
+}
+function x3Photo(){
+  button1.remove();
+  button2.remove();
+  button3.remove();
+  numPhotos = 3;
+  start = !start;
+  timerStart = millis();
+}
+function x5Photo(){
+  button1.remove();
+  button2.remove();
+  button3.remove();
+  numPhotos = 5;
+  start = !start;
+  timerStart = millis();
+}
+function startTimer(){
+    let currentTime = millis();
+    countDown = timer - int((currentTime-timerStart)/1000);
+    let timerDisplay = [countDown, timerDuration];
+    let b = 0;
+
+    if(countDown === 0 && !photo){
+    // saveCanvas('Photobooth' + frameCount, 'png');
+    photo = true;
+    snap = snap + 1;
+    console.log('SNAP');
+    // saveCanvas('ml5-capture-' + frameCount, 'png');
+
+    } 
+    if(countDown < 0 && snap < numPhotos){
+      resetTimer();
+    } 
+    if(snap >= numPhotos){
+      b = b+1;
+    }
+
+    push();
+      textSize(60);
+      text(timerDisplay[b], 100, 100);
+    pop();
+  
+  
+  
+}
+function pauseTimer(){
+  timerDisplay = 10;
+}
+function resetTimer(){
+  photo = false;  
+  timerStart = millis();
+}
+function toggleHat(){
+  vis = !vis;
+}
+function toggleBVis(){
+  glassesVis = !glassesVis;
+  console.log(glassesVis);
 }

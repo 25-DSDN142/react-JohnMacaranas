@@ -13,9 +13,9 @@ function prepareInteraction() {
   ArrowR = loadImage('/images/Proto/arrowR.png');
   SelectArrowL = loadImage('/images/Proto/arrowSelectL.png');
   SelectArrowR = loadImage('/images/Proto/arrowSelectR.png');
-  testArray.push(loadImage('/images/Proto/glasses.png'));
-  testArray.push(loadImage('/images/Proto/glasses2.png'));
-  testArray.push(loadImage('/images/Proto/moustache.png'));
+  glassesArray.push(loadImage('/images/Proto/glasses.png'));
+  glassesArray.push(loadImage('/images/Proto/glasses2.png'));
+  glassesArray.push(loadImage('/images/Proto/moustache.png'));
 
 textSize(28);
 text(timer, 200, 300);
@@ -73,7 +73,7 @@ function drawInteraction(faces, hands) {
         progress = startOfPress / timeToPress * 100;       //which will then increase the array by 1
 
         if(progress >= 20){
-          a = (a + 1) % testArray.length;
+          a = (a + 1) % glassesArray.length;
 
           console.log(progress);
         }
@@ -87,7 +87,7 @@ function drawInteraction(faces, hands) {
         if(progress >= 20){
           a = a - 1
           if(a < 0){
-            a = testArray.length - 1;
+            a = glassesArray.length - 1;
           }
         console.log(progress);
         } 
@@ -155,7 +155,7 @@ function drawInteraction(faces, hands) {
     imageMode(CENTER);
     translate(faceCenterX, faceCenterY);
     rotate(rotateAmount);
-    image(testArray[a], 0, 0, faceWidth, faceHeight);
+    image(glassesArray[a], 0, 0, faceWidth, faceHeight);
     pop();
     // rect(face.faceOval.centerX, face.faceOval.centerY, face.faceOval.width, face.faceOval.height);
     /*

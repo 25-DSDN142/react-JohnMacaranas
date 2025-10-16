@@ -663,7 +663,7 @@ function keyPressed() {
   }
   
   // Take screenshot
-  if (key === '!') {
+  if (key === 's') {
     saveCanvas('ml5-capture-' + frameCount, 'png');
   }
 }
