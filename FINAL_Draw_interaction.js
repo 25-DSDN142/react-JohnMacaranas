@@ -155,6 +155,7 @@ if(start == true){
       }
     } 
     //accessory cycling
+    //cursor
     if (hatVis || glassesVis || mustacheVis === true){
       cursor = false;
       if(hand.handedness == 'Left'){
@@ -188,21 +189,21 @@ if(start == true){
         if(startOfPress > 0 && progress < 20){
           progress = startOfPress / timeToPress * 100;
         
-          if(progress >= 20){
-            if(y > 123 && y <= 380) {
+          if(progress >= 20){ 
+            if(y > 123 && y <= 380) { //this detects the y value and decreases the array of the corresponding accessory
             a = a - 1
             if(a < 0){
-              a = hatArray.length - 1;
+              a = hatArray.length - 1; //hat
             }
           } else if (y > 380 && y <= 636){
             b = b - 1
             if(b < 0){
-              b = glassesArray.length - 1;
+              b = glassesArray.length - 1; //glasses
             }
           } else if (y > 636 && y <= 880){
             c = c - 1
             if(c < 0){
-              c = mustacheArray.length - 1;
+              c = mustacheArray.length - 1; //mustache
             }
           }
           } 
@@ -219,8 +220,6 @@ if(start == true){
       Stop drawing on the hands here
     */
   }
-  // console.log(bvis);
- 
   //------------------------------------------------------------
   //facePart
   // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
@@ -229,18 +228,6 @@ if(start == true){
     if (showKeypoints) {
       drawPoints(face)
     }
-    // console.log(face);
-    /*
-    Once this program has a face, it knows some things about it.
-    This includes how to draw a box around the face, and an oval. 
-    It also knows where the key points of the following parts are:
-     face.leftEye
-     face.leftEyebrow
-     face.lips
-     face.rightEye
-     face.rightEyebrow
-    */
-
     /*
     Start drawing on the face here
     */
@@ -298,7 +285,6 @@ if(start == true){
         image(mustacheArray[c], 0, 0, faceWidth, faceHeight/1.5);
       pop();
     }
-    // rect(face.faceOval.centerX, face.faceOval.centerY, face.faceOval.width, face.faceOval.height);
     /*
     Stop drawing on the face here
     */
@@ -307,13 +293,16 @@ if(start == true){
   //------------------------------------------------------
   // You can make addtional elements here, but keep the face drawing inside the for loop. 
 } 
+//snapshot
 if(m === 2){
   if(snapPhoto == true){
     takePhoto();
   }
 }
+//ui
 image(uiMenu[m], 0, 0);
 
+//ui buttons + start timer
 if(m === 2){
   startTimer();
   if(hatVis == true){
@@ -402,14 +391,17 @@ function photoSelect(){
   button1x.mouseClicked(x1Photo);
   button1x.position(611, 275);
   button1x.style("cursor", "pointer");
+
   button2x = createImg("/images/FinalAssets/3x.png");
   button2x.mouseClicked(x3Photo);
   button2x.position(934, 275);
   button2x.style("cursor", "pointer");
+
   button4x = createImg("/images/FinalAssets/4x.png");
   button4x.mouseClicked(x4Photo);
   button4x.position(627, 561);
   button4x.style("cursor", "pointer");
+  
   button6x = createImg("/images/FinalAssets/6x.png");
   button6x.mouseClicked(x6Photo);
   button6x.position(905, 561);
@@ -493,7 +485,7 @@ function resetTimer(){
   timerStart = millis();
 }
 function takePhoto(){
-  // saveCanvas('Photobooth' + frameCount, 'png');
+  saveCanvas('Photobooth' + frameCount, 'png');
   snapPhoto = false;
   console.log('SNAP');
 }
